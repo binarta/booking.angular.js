@@ -1,0 +1,6 @@
+{
+  "default": {
+    "bin.booking":"bower_components/binarta.booking.angular/src/booking.js",
+    "bin.booking.templates":"bower_components/binarta.booking.angular/src/booking-tpls-bootstrap3.js"
+  }
+}
