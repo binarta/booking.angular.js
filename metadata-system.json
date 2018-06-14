@@ -2,23 +2,71 @@
     "msgs": {
         "nl": {
             "booking.config.change.params": "Verander instellingen",
+            "booking.config.is-discount-active": "Kortingscode toelaten",
             "booking.params.url": "Url naar reservatie",
-            "booking.params.url.placeholder": "https://..."
+            "booking.params.url.placeholder": "https://...",
+            "booking.params.url.required": "De url is verplicht.",
+            "booking.params.date-format": "Format datum",
+            "booking.params.date-format.placeholder": "DD-MM-YYYY",
+            "booking.params.locale-name": "Taal parameter",
+            "booking.params.locale-name.placeholder": "Language",
+            "booking.params.arrival-name": "Aankomst parameter",
+            "booking.params.arrival-name.placeholder": "Arrival",
+            "booking.params.departure-name": "Vertrek parameter",
+            "booking.params.departure-name.placeholder": "Departure",
+            "booking.params.discount-name": "Discount parameter",
+            "booking.params.discount-name.placeholder": "Discount"
         },
         "en": {
             "booking.config.change.params": "Change settings",
+            "booking.config.is-discount-active": "Show discount field",
             "booking.params.url": "Url to reservation",
-            "booking.params.url.placeholder": "https://..."
+            "booking.params.url.placeholder": "https://...",
+            "booking.params.url.required": "The url is required",
+            "booking.params.date-format": "Date format",
+            "booking.params.date-format.placeholder": "DD-MM-YYYY",
+            "booking.params.locale-name": "Locale parameter",
+            "booking.params.locale-name.placeholder": "Language",
+            "booking.params.arrival-name": "Arrival parameter",
+            "booking.params.arrival-name.placeholder": "Arrival",
+            "booking.params.departure-name": "Departure parameter",
+            "booking.params.departure-name.placeholder": "Departure",
+            "booking.params.discount-name": "Discount parameter",
+            "booking.params.discount-name.placeholder": "Discount"
         },
         "fr": {
             "booking.config.change.params": "Modifier les paramètres",
+            "booking.config.is-discount-active": "Show discount field",
             "booking.params.url": "Url to reservation",
-            "booking.params.url.placeholder": "https://..."
+            "booking.params.url.placeholder": "https://...",
+            "booking.params.url.required": "The url is required",
+            "booking.params.date-format": "Date format",
+            "booking.params.date-format.placeholder": "DD-MM-YYYY",
+            "booking.params.locale-name": "Locale parameter",
+            "booking.params.locale-name.placeholder": "Language",
+            "booking.params.arrival-name": "Arrival parameter",
+            "booking.params.arrival-name.placeholder": "Arrival",
+            "booking.params.departure-name": "Departure parameter",
+            "booking.params.departure-name.placeholder": "Departure",
+            "booking.params.discount-name": "Discount parameter",
+            "booking.params.discount-name.placeholder": "Discount"
         },
         "de": {
             "booking.config.change.params": "Einstellungen ändern",
+            "booking.config.is-discount-active": "Show discount field",
             "booking.params.url": "Url to reservation",
-            "booking.params.url.placeholder": "https://..."
+            "booking.params.url.placeholder": "https://...",
+            "booking.params.url.required": "The url is required",
+            "booking.params.date-format": "Date format",
+            "booking.params.date-format.placeholder": "DD-MM-YYYY",
+            "booking.params.locale-name": "Locale parameter",
+            "booking.params.locale-name.placeholder": "Language",
+            "booking.params.arrival-name": "Arrival parameter",
+            "booking.params.arrival-name.placeholder": "Arrival",
+            "booking.params.departure-name": "Departure parameter",
+            "booking.params.departure-name.placeholder": "Departure",
+            "booking.params.discount-name": "Discount parameter",
+            "booking.params.discount-name.placeholder": "Discount"
         }
     }
 }
