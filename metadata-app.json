@@ -4,25 +4,29 @@
             "booking.title": "Make a reservation",
             "booking.arrival-date": "Arrival date",
             "booking.departure-date": "Departure date",
-            "booking.discount-code": "Discount code"
+            "booking.discount-code": "Discount code",
+            "booking.btn-submit": "Submit"
         },
         "en": {
             "booking.title": "Make a reservation",
             "booking.arrival-date": "Arrival date",
             "booking.departure-date": "Departure date",
-            "booking.discount-code": "Discount code"
+            "booking.discount-code": "Discount code",
+            "booking.btn-submit": "Submit"
         },
         "fr": {
             "booking.title": "Make a reservation",
             "booking.arrival-date": "Arrival date",
             "booking.departure-date": "Departure date",
-            "booking.discount-code": "Discount code"
+            "booking.discount-code": "Discount code",
+            "booking.btn-submit": "Submit"
         },
         "de": {
             "booking.title": "Make a reservation",
             "booking.arrival-date": "Arrival date",
             "booking.departure-date": "Departure date",
-            "booking.discount-code": "Discount code"
+            "booking.discount-code": "Discount code",
+            "booking.btn-submit": "Submit"
         }
     }
 }
