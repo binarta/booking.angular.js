@@ -1,9 +1,9 @@
 (function (angular) {
     angular.module('bin.booking', ['binarta-applicationjs-angular1', 'momentx'])
-        .service('binBooking', ['binarta', BinBookingService])
+        .service('binBooking', ['binarta', 'editModeRenderer', '$rootScope', '$q', BinBookingService])
         .component('binBooking', new BookingComponent());
 
-    function BinBookingService(binarta) {
+    function BinBookingService(binarta, editModeRenderer, $rootScope, $q) {
         var bookingConfigCode = 'booking.config';
 
         this.updateConfig = function (config, response) {
@@ -25,9 +25,32 @@
         this.findConfig = function (callback) {
             return binarta.application.config.findPublic(bookingConfigCode, function (config) {
                 callback(config || {});
+            });
+        };
 
-                // if (!config) callback({});
-                // else callback(JSON.parse(config));
+        this.openSettings = function () {
+            var scope = $rootScope.$new();
+            scope.fields = {};
+            scope.lang = binarta.application.localeForPresentation();
+
+            scope.close = function () {
+                editModeRenderer.close();
+            };
+
+            scope.submit = function () {
+                scope.violations = [];
+
+                if (!scope.fields.url) {
+                    scope.violations.push('url.required');
+                    return
+                }
+
+                console.log(scope.fields);
+            };
+
+            editModeRenderer.open({
+                templateUrl: 'bin-booking-edit.html',
+                scope: scope
             });
         };
 
@@ -72,6 +95,8 @@
                     $ctrl.config = _config_;
                 });
             };
+
+            $ctrl.openSettings = binBooking.openSettings;
 
             $ctrl.submit = function () {
                 var params = $ctrl.config.params || {};
