@@ -1,16 +1,24 @@
 {
     "msgs": {
         "nl": {
-            "booking.config.change.params": "Verander instellingen"
+            "booking.config.change.params": "Verander instellingen",
+            "booking.params.url": "Url naar reservatie",
+            "booking.params.url.placeholder": "https://..."
         },
         "en": {
-            "booking.config.change.params": "Change settings"
+            "booking.config.change.params": "Change settings",
+            "booking.params.url": "Url to reservation",
+            "booking.params.url.placeholder": "https://..."
         },
         "fr": {
-            "booking.config.change.params": "Modifier les paramètres"
+            "booking.config.change.params": "Modifier les paramètres",
+            "booking.params.url": "Url to reservation",
+            "booking.params.url.placeholder": "https://..."
         },
         "de": {
-            "booking.config.change.params": "Einstellungen ändern"
+            "booking.config.change.params": "Einstellungen ändern",
+            "booking.params.url": "Url to reservation",
+            "booking.params.url.placeholder": "https://..."
         }
     }
 }
