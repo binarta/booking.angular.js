@@ -1,0 +1,16 @@
+{
+    "msgs": {
+        "nl": {
+            "booking.config.change.params": "Verander instellingen"
+        },
+        "en": {
+            "booking.config.change.params": "Change settings"
+        },
+        "fr": {
+            "booking.config.change.params": "Modifier les paramètres"
+        },
+        "de": {
+            "booking.config.change.params": "Einstellungen ändern"
+        }
+    }
+}
