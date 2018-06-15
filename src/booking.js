@@ -4,6 +4,7 @@
         .component('binBooking', new BookingComponent());
 
     function BinBookingService(binarta, editModeRenderer, $rootScope, $q) {
+        var self = this;
         var bookingConfigCode = 'booking.config';
 
         this.updateConfig = function (config, response) {
@@ -12,7 +13,8 @@
                 var value = {
                     url: config.url
                 };
-                if (config.params) value.params = config.params;
+
+                value.params = config.params ? config.params : {};
 
 
                 binarta.application.config.addPublic({
@@ -24,7 +26,9 @@
 
         this.findConfig = function (callback) {
             return binarta.application.config.findPublic(bookingConfigCode, function (config) {
-                callback(config || {});
+                if (!config) callback({});
+                else if (typeof config === 'string') callback(JSON.parse(config));
+                else callback(config);
             });
         };
 
@@ -32,6 +36,10 @@
             var scope = $rootScope.$new();
             scope.fields = {};
             scope.lang = binarta.application.localeForPresentation();
+
+            self.findConfig(function (config) {
+                scope.fields = config;
+            });
 
             scope.close = function () {
                 editModeRenderer.close();
@@ -95,11 +103,10 @@
                     $ctrl.config = _config_;
                 });
             };
-
+            
             $ctrl.openSettings = binBooking.openSettings;
 
             $ctrl.submit = function () {
-                var params = $ctrl.config.params || {};
 
                 if ($ctrl.completeUrlWithoutParams)
                     $ctrl.url = $ctrl.completeUrlWithoutParams;
@@ -110,11 +117,11 @@
                 else throw new Error('Should have a URL to navigate too');
 
 
-                $ctrl.dateFormat = $ctrl.dateFormat || params.dateFormat || 'YYYY-MM-DD';
-                $ctrl.localeParamName = $ctrl.localeParamName || params.locale || 'Language';
-                $ctrl.arrivalParamName = $ctrl.arrivalParamName || params.arrival || 'Arrival';
-                $ctrl.departureParamName = $ctrl.departureParamName || params.departure || 'Departure';
-                $ctrl.discountParamName = $ctrl.discountParamName || params.discount || 'DiscountCode';
+                $ctrl.dateFormat = $ctrl.config.params.dateFormat || $ctrl.dateFormat || 'YYYY-MM-DD';
+                $ctrl.localeParamName = $ctrl.config.params.locale || $ctrl.localeParamName || 'Language';
+                $ctrl.arrivalParamName = $ctrl.config.params.arrival || $ctrl.arrivalParamName || 'Arrival';
+                $ctrl.departureParamName = $ctrl.config.params.departure || $ctrl.departureParamName || 'Departure';
+                $ctrl.discountParamName = $ctrl.config.params.discount || $ctrl.discountParamName || 'Discount';
 
                 var arrivalDate = moment($scope.arrivalDate).format($ctrl.dateFormat);
                 var departureDate = moment($scope.departureDate).format($ctrl.dateFormat);

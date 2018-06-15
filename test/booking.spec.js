@@ -1,8 +1,13 @@
+
+beforeEach(module('toggle.edit.mode'));
 beforeEach(module('bin.booking'));
 
+var binarta;
+var validUrl = 'http://test.com';
+var bookingConfigCode = 'booking.config';
+
 describe('binBooking service', function () {
-    var sut, binarta;
-    var validUrl = 'http://test.com';
+    var sut;
 
     beforeEach(inject(function (binBooking, _binarta_) {
         sut = binBooking;
@@ -10,22 +15,14 @@ describe('binBooking service', function () {
         reset();
     }));
 
-    function reset() {
-        binarta.application.config.cache('booking.config', '');
-        sessionStorage.clear();
-        localStorage.clear();
-    }
-
     describe('on update config', function () {
         it('update url', function () {
             sut.updateConfig({
                 url: validUrl
             });
 
-            binarta.application.config.findPublic('booking.config', function (actual) {
-                expect(actual).toEqual({
-                    url: validUrl
-                });
+            binarta.application.config.findPublic(bookingConfigCode, function (actual) {
+                expect(actual.url).toEqual(validUrl);
             });
         });
 
@@ -104,6 +101,10 @@ describe('binBooking component', function () {
     var binBooking;
     var genericMomentDate;
 
+    beforeEach(inject(function (_binarta_) {
+        binarta = _binarta_;
+        reset();
+    }));
 
     beforeEach(inject(function (_$componentController_, _moment_, $rootScope, _binBooking_) {
         moment = _moment_;
@@ -111,15 +112,9 @@ describe('binBooking component', function () {
         binBooking = _binBooking_;
         genericMomentDate = '2019-08-05';
 
-        binBooking.updateConfig({
-            url: bookingBaseUrl.slice(),
-        });
-
-        openUrlSpy = jasmine.createSpy('open');
-
         bookingConfig = {
             params: {
-                dateFormat: 'YYYY',
+                dateFormat: 'YYYY-MM-DD',
                 locale: 'Language',
                 departure: 'Departure',
                 arrival: 'Arrival',
@@ -127,6 +122,10 @@ describe('binBooking component', function () {
             },
             url: bookingBaseUrl,
         };
+
+        binBooking.updateConfig(JSON.parse(JSON.stringify(bookingConfig)));
+
+        openUrlSpy = jasmine.createSpy('open');
 
         windowMock = {
             open: openUrlSpy,
@@ -158,28 +157,32 @@ describe('binBooking component', function () {
 
     describe('Initializing component -', function () {
 
-        beforeEach(function () {
-            $ctrl.$onInit();
-        });
+        describe('Config loaded -', function () {
 
-        it('Should have a minimumArrivalDate initialized', function () {
-            expect($ctrl.minArrivalDate instanceof moment).toBeTruthy();
-        });
+            beforeEach(function () {
+                $ctrl.$onInit();
+            });
 
-        it('Should have a minDepartureDate initialized', function () {
-            expect($ctrl.minDepartureDate instanceof moment).toBeTruthy();
-        });
+            it('Should have a minimumArrivalDate initialized', function () {
+                expect($ctrl.minArrivalDate instanceof moment).toBeTruthy();
+            });
 
-        it('Should have a arrivalDate initialized', function () {
-            expect(scope.arrivalDate instanceof moment).toBeTruthy();
-        });
+            it('Should have a minDepartureDate initialized', function () {
+                expect($ctrl.minDepartureDate instanceof moment).toBeTruthy();
+            });
 
-        it('Should have a departureDate initialized', function () {
-            expect(scope.departureDate instanceof moment).toBeTruthy();
-        });
+            it('Should have a arrivalDate initialized', function () {
+                expect(scope.arrivalDate instanceof moment).toBeTruthy();
+            });
 
-        it('Should have a config initialized', function () {
-            expect($ctrl.config.url).toBe(bookingBaseUrl);
+            it('Should have a departureDate initialized', function () {
+                expect(scope.departureDate instanceof moment).toBeTruthy();
+            });
+
+            it('Should have a config initialized', function () {
+                expect($ctrl.config.url).toBe(bookingBaseUrl);
+            });
+
         });
 
         describe('On error -', function () {
@@ -216,15 +219,9 @@ describe('binBooking component', function () {
 
     describe('Submit -', function () {
 
-        function getParamsArr(url) {
-            var params = url.split('?')[1];
-            var obj = {};
-            params.split('&').map(function (el) {
-                var split = el.split('=');
-                obj[split[0]] = split[1];
-            });
-            return obj;
-        }
+        beforeEach(function () {
+            $ctrl.config = bookingConfig;
+        });
 
         it('Should open a new window', function () {
             $ctrl.$onInit();
@@ -248,7 +245,7 @@ describe('binBooking component', function () {
             expect($ctrl.url.split('?')[0]).toBe($ctrl.completeUrlWithoutParams);
         });
 
-        describe('Params in url -', function () {
+        describe('Param names in url -', function () {
             beforeEach(function () {
                 $ctrl.config.url = bookingBaseUrl;
             });
@@ -271,10 +268,6 @@ describe('binBooking component', function () {
             it('Should add discountCode if available', function () {
                 $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.discountParamName]).toBe(undefined);
-
-                $ctrl.discountCode = 'ALL-FREE';
-                $ctrl.submit();
-                expect(getParamsArr($ctrl.url)[$ctrl.discountParamName]).toBe($ctrl.discountCode);
             });
         });
 
@@ -309,6 +302,9 @@ describe('binBooking component', function () {
         describe('Default values available, no bindings and no config params -', function () {
 
             beforeEach(function () {
+                binBooking.updateConfig({
+                    url: validUrl,
+                });
                 $ctrl.$onInit();
                 $ctrl.submit();
             });
@@ -330,7 +326,7 @@ describe('binBooking component', function () {
             });
 
             it('Should have a default paramName for discount', function () {
-                expect($ctrl.discountParamName).toBe('DiscountCode');
+                expect($ctrl.discountParamName).toBe('Discount');
             });
         });
 
@@ -384,3 +380,19 @@ describe('binBooking component', function () {
     });
 
 });
+
+function reset() {
+    binarta.application.config.cache('booking.config', '');
+    sessionStorage.clear();
+    localStorage.clear();
+}
+
+function getParamsArr(url) {
+    var params = url.split('?')[1];
+    var obj = {};
+    params.split('&').map(function (el) {
+        var split = el.split('=');
+        obj[split[0]] = split[1];
+    });
+    return obj;
+}
