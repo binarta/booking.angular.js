@@ -1,16 +1,10 @@
 (function (angular) {
-    angular.module('bin.booking', ['binarta-applicationjs-angular1'])
-        .service('binBooking', ['binarta', BinBookingService])
+    angular.module('bin.booking', ['binarta-applicationjs-angular1', 'momentx'])
+        .service('binBooking', ['binarta', 'editModeRenderer', '$rootScope', '$q', BinBookingService])
         .component('binBooking', new BookingComponent());
 
-    var defaultDateFormat = 'YYYY-MM-DD';
-    var defaultLocaleParamName = 'Language';
-    var defaultArrivalParamName = 'Arrival';
-    var defaultDepartureParamName = 'Departure';
-    var defaultDiscountParamName = 'DiscountCode';
-    var defaultUrl = 'https://reservations.cubilis.eu/HOTEL-ID/Rooms/Select'; //Existing hotel-id = 6331
-
-    function BinBookingService(binarta) {
+    function BinBookingService(binarta, editModeRenderer, $rootScope, $q) {
+        var self = this;
         var bookingConfigCode = 'booking.config';
 
         this.updateConfig = function (config, response) {
@@ -19,7 +13,8 @@
                 var value = {
                     url: config.url
                 };
-                if (config.params) value.params = config.params;
+
+                value.params = config.params ? config.params : {};
 
 
                 binarta.application.config.addPublic({
@@ -31,10 +26,46 @@
 
         this.findConfig = function (callback) {
             return binarta.application.config.findPublic(bookingConfigCode, function (config) {
-                callback(config || {});
+                if (!config) callback({});
+                else if (typeof config === 'string') callback(JSON.parse(config));
+                else callback(config);
+            });
+        };
 
-                // if (!config) callback({});
-                // else callback(JSON.parse(config));
+        this.openSettings = function () {
+            var scope = $rootScope.$new();
+            scope.fields = {};
+            scope.lang = binarta.application.localeForPresentation();
+
+            self.findConfig(function (config) {
+                scope.fields = config;
+            });
+
+            scope.close = function () {
+                editModeRenderer.close();
+            };
+
+            scope.submit = function () {
+                scope.violations = [];
+
+                scope.working = true;
+
+                if (!scope.fields.url) {
+                    scope.violations.push('url.required');
+                    return
+                }
+
+                self.updateConfig(scope.fields, {
+                    success: function () {
+                        scope.working = false;
+                        scope.close();
+                    }
+                });
+            };
+
+            editModeRenderer.open({
+                templateUrl: 'bin-booking-edit.html',
+                scope: scope
             });
         };
 
@@ -45,34 +76,88 @@
 
     function BookingComponent() {
         this.templateUrl = 'bin-booking.html';
+        this.bindings = {
+            dateFormat: '@',
+
+            localeParamName: '@',
+            arrivalParamName: '@',
+            departureParamName: '@',
+            discountParamName: '@',
+
+            baseUrl: '@',
+            hotelId: '@',
+            urlSuffix: '@',
+            completeUrlWithoutParams: '@',
+
+            discountCode: '@',
+        };
         this.controller = ['$scope', '$window', 'binBooking', 'moment', 'binarta', binComponentController(function ($scope, $window, binBooking, moment, binarta) {
             var $ctrl = this;
-            $ctrl.minArrivalDate = moment();
-            $ctrl.minDepartureDate = moment().add(1, 'days');
-            $scope.arrivalDate = moment().add(1, 'days');
-            $scope.departureDate = moment().add(3, 'days');
 
-            $ctrl.submit = function () {
-                binBooking.findConfig(function (config) {
-                    var params = config.params || {};
-                    var dateFormat = params.dateFormat || defaultDateFormat;
-                    var url = config.url;
-                    var localeParam = params.locale || defaultLocaleParamName;
-                    var arrivalParam = params.arrival || defaultArrivalParamName;
-                    var departureParam = params.departure || defaultDepartureParamName;
-                    var discountParam = params.discount || defaultDiscountParamName;
 
-                    var arrivalDate = moment($scope.arrivalDate).format(dateFormat);
-                    var departureDate = moment($scope.departureDate).format(dateFormat);
+            $ctrl.$onInit = function () {
+                $ctrl.minArrivalDate = moment();
+                $ctrl.minDepartureDate = moment().add(1, 'days');
+                $scope.arrivalDate = moment().add(1, 'days');
+                $scope.departureDate = moment().add(3, 'days');
 
-                    url += getQueryStringSeperator(url) + localeParam + '=' + binarta.application.localeForPresentation();
-                    url += getQueryStringSeperator(url) + arrivalParam + '=' + arrivalDate;
-                    url += getQueryStringSeperator(url) + departureParam + '=' + departureDate;
-                    if ($scope.discountCode) url += getQueryStringSeperator(url) + discountParam + '=' + $scope.discountCode;
-    
-                    $window.open(url);
+
+                if ($ctrl.completeUrlWithoutParams && ($ctrl.baseUrl || $ctrl.hotelId || $ctrl.urlSuffix)) {
+                    throw new Error('You should use a completeUrlWithoutParams or the separete segments baseUrl, hotelId, urlSuffix');
+                }
+
+                binBooking.findConfig(function (_config_) {
+                    $ctrl.config = _config_;
+
+                    if ($ctrl.config.params === undefined) {
+                        $ctrl.config.params = {};
+                    }
                 });
             };
+
+            $ctrl.openSettings = binBooking.openSettings;
+
+            $ctrl.submit = function () {
+
+                if ($ctrl.completeUrlWithoutParams)
+                    $ctrl.url = $ctrl.completeUrlWithoutParams;
+                else if ($ctrl.baseUrl && $ctrl.hotelId && $ctrl.urlSuffix)
+                    $ctrl.url = $ctrl.composeBookingUrl($ctrl.baseUrl, $ctrl.hotelId, $ctrl.urlSuffix);
+                else if ($ctrl.config.url)
+                    $ctrl.url = $ctrl.config.url;
+                else throw new Error('Should have a URL to navigate too');
+
+                $ctrl.dateFormat = $ctrl.config.params.dateFormat || $ctrl.dateFormat || 'YYYY-MM-DD';
+                $ctrl.localeParamName = $ctrl.config.params.locale || $ctrl.localeParamName || 'Language';
+                $ctrl.arrivalParamName = $ctrl.config.params.arrival || $ctrl.arrivalParamName || 'Arrival';
+                $ctrl.departureParamName = $ctrl.config.params.departure || $ctrl.departureParamName || 'Departure';
+                $ctrl.discountParamName = $ctrl.config.params.discount || $ctrl.discountParamName || 'Discount';
+
+                var arrivalDate = moment($scope.arrivalDate).format($ctrl.dateFormat);
+                var departureDate = moment($scope.departureDate).format($ctrl.dateFormat);
+
+                $ctrl.url += getQueryStringSeperator($ctrl.url) + $ctrl.localeParamName + '=' + binarta.application.localeForPresentation();
+                $ctrl.url += getQueryStringSeperator($ctrl.url) + $ctrl.arrivalParamName + '=' + arrivalDate;
+                $ctrl.url += getQueryStringSeperator($ctrl.url) + $ctrl.departureParamName + '=' + departureDate;
+
+                if ($ctrl.discountCode) {
+                    $ctrl.url += getQueryStringSeperator($ctrl.url) + $ctrl.discountParamName + '=' + $ctrl.discountCode;
+                }
+
+                $window.open($ctrl.url);
+            };
+
+            $ctrl.composeBookingUrl = function (baseUrl, hotelId, urlSuffix) {
+                if (baseUrl[baseUrl.length - 1] !== '/') {
+                    throw new Error('Base URL should end with a "/"');
+                }
+
+                if (urlSuffix[0] === '/') {
+                    throw new Error('urlSuffix can\'t start with a "/"');
+                }
+
+                return baseUrl + hotelId + '/' + urlSuffix;
+            }
 
             function getQueryStringSeperator(url) {
                 return url.indexOf('?') === -1 ? '?' : '&';

@@ -1,20 +1,27 @@
 bin-booking {
-    display: block;
-    background: lighten(@gray-base, 5%);
-    padding-top: @section-padding-xs;
-    padding-bottom: @section-padding-xs;
-    .form-group {
-        text-align: left;
+  display: block;
+  h1 {
+    margin-bottom: 50px;
+    text-align: center;
+  }
+  .form-group {
+    text-align: left;
+  }
+  form {
+    max-width: 350px;
+    margin: 0 auto;
+    >.row {
+      display: flex;
+      justify-content: center;
+    }
+  }
+  @media (min-width: @screen-sm-min) {
+    h1 {
+      margin-left: 15%;
+      margin-right: 15%;
     }
     form {
-        max-width: 350px;
-        margin: 0 auto;
+      max-width: 100%;
     }
-    @media (min-width: @screen-sm-min) {
-        padding-top: @section-padding-sm;
-        padding-bottom: @section-padding-sm;
-        form {
-            max-width: 100%;
-        }
-    }
+  }
 }
