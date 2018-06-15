@@ -48,12 +48,19 @@
             scope.submit = function () {
                 scope.violations = [];
 
+                scope.working = true;
+
                 if (!scope.fields.url) {
                     scope.violations.push('url.required');
                     return
                 }
 
-                console.log(scope.fields);
+                self.updateConfig(scope.fields, {
+                    success: function () {
+                        scope.working = false;
+                        scope.close();
+                    }
+                });
             };
 
             editModeRenderer.open({
@@ -101,9 +108,13 @@
 
                 binBooking.findConfig(function (_config_) {
                     $ctrl.config = _config_;
+
+                    if ($ctrl.config.params === undefined) {
+                        $ctrl.config.params = {};
+                    }
                 });
             };
-            
+
             $ctrl.openSettings = binBooking.openSettings;
 
             $ctrl.submit = function () {
@@ -115,7 +126,6 @@
                 else if ($ctrl.config.url)
                     $ctrl.url = $ctrl.config.url;
                 else throw new Error('Should have a URL to navigate too');
-
 
                 $ctrl.dateFormat = $ctrl.config.params.dateFormat || $ctrl.dateFormat || 'YYYY-MM-DD';
                 $ctrl.localeParamName = $ctrl.config.params.locale || $ctrl.localeParamName || 'Language';
