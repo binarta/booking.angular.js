@@ -19,8 +19,10 @@
                         <div class="col-sm-3">
                             <label for="binBookingDepartureDate" i18n code="booking.departure-date" ng-bind="var"></label>
                         </div>
-                        <div class="col-sm-3">
+                        <div ng-if="$ctrl.config.params.discountActive" class="col-sm-3">
                             <label for="binBookingDiscountCode" i18n code="booking.discount-code" ng-bind="var"></label>
+                        </div>
+                        <div class="col-sm-3">
                         </div>
                     </div>
                     <div class="row">
