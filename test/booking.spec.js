@@ -179,11 +179,11 @@ describe('binBooking component', function () {
             });
 
             it('Should have a arrivalDate initialized', function () {
-                expect(scope.arrivalDate instanceof moment).toBeTruthy();
+                expect($ctrl.arrivalDate instanceof moment).toBeTruthy();
             });
 
             it('Should have a departureDate initialized', function () {
-                expect(scope.departureDate instanceof moment).toBeTruthy();
+                expect($ctrl.departureDate instanceof moment).toBeTruthy();
             });
 
             it('Should observe the booking config', function () {
@@ -391,7 +391,7 @@ describe('binBooking component', function () {
             });
         });
     });
-
+    
 });
 
 function reset() {
