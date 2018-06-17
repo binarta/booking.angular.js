@@ -261,25 +261,22 @@ describe('binBooking component', function () {
         describe('Param names in url -', function () {
             beforeEach(function () {
                 $ctrl.config.url = bookingBaseUrl;
+                $ctrl.submit();
             });
 
             it('Should add the localeparam', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.localeParamName]).toBe(binartaMock.application.localeForPresentation());
             });
 
             it('Should add the arrivalParam', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.arrivalParamName]).toBe(genericMomentDate);
             });
 
             it('Should add the departureParam', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.departureParamName]).toBe(genericMomentDate);
             });
 
             it('Should add discountCode if available', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.discountParamName]).toBe(undefined);
             });
         });
@@ -354,7 +351,6 @@ describe('binBooking component', function () {
                 expect($ctrl.submit).toThrowError('Should have a URL to navigate too');
             });
 
-
         });
     });
 
@@ -391,7 +387,7 @@ describe('binBooking component', function () {
             });
         });
     });
-    
+
 });
 
 function reset() {
