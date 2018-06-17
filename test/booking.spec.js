@@ -96,20 +96,23 @@ describe('binBooking component', function () {
     var scope;
     var windowMock;
     var bookingBaseUrl = 'https://reservations.cubilis.eu/6331/Rooms/Select';
-    var openUrlSpy;
+    var openUrlSpy, observePublicSpy;
     var bookingConfigCode;
     var binBooking;
     var genericMomentDate;
+    var $rootScope;
 
     beforeEach(inject(function (_binarta_) {
         binarta = _binarta_;
         reset();
     }));
 
-    beforeEach(inject(function (_$componentController_, _moment_, $rootScope, _binBooking_) {
+    beforeEach(inject(function (_$componentController_, _moment_, _$rootScope_, _binBooking_, _$timeout_) {
         moment = _moment_;
+        $timeout = _$timeout_;
         $componentController = _$componentController_;
         binBooking = _binBooking_;
+        $rootScope = _$rootScope_;
         genericMomentDate = '2019-08-05';
 
         bookingConfig = {
@@ -126,6 +129,7 @@ describe('binBooking component', function () {
         binBooking.updateConfig(JSON.parse(JSON.stringify(bookingConfig)));
 
         openUrlSpy = jasmine.createSpy('open');
+        observePublicSpy = jasmine.createSpy('observePublic');
 
         windowMock = {
             open: openUrlSpy,
@@ -135,6 +139,9 @@ describe('binBooking component', function () {
             application: {
                 localeForPresentation: function () {
                     return 'nl-NL';
+                },
+                config: {
+                    observePublic: observePublicSpy,
                 },
             },
         };
@@ -179,8 +186,14 @@ describe('binBooking component', function () {
                 expect(scope.departureDate instanceof moment).toBeTruthy();
             });
 
-            it('Should have a config initialized', function () {
-                expect($ctrl.config.url).toBe(bookingBaseUrl);
+            it('Should observe the booking config', function () {
+                expect(observePublicSpy).toHaveBeenCalledWith('booking.config', jasmine.any(Function));
+            });
+
+            it('Should set the $config', function () {
+                $ctrl.findConfig();
+                expect($ctrl.config.url).toBe(bookingConfig.url);
+                expect($ctrl.config.params).toEqual(bookingConfig.params);
             });
 
         });
