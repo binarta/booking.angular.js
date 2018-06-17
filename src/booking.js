@@ -95,8 +95,8 @@
                 $ctrl.$onInit = function () {
                     $ctrl.minArrivalDate = moment();
                     $ctrl.minDepartureDate = moment().add(1, 'days');
-                    $scope.arrivalDate = moment().add(1, 'days');
-                    $scope.departureDate = moment().add(3, 'days');
+                    $ctrl.arrivalDate = moment().add(1, 'days');
+                    $ctrl.departureDate = moment().add(3, 'days');
 
 
                     if ($ctrl.completeUrlWithoutParams && ($ctrl.baseUrl || $ctrl.hotelId || $ctrl.urlSuffix)) {
@@ -136,8 +136,8 @@
                     $ctrl.departureParamName = $ctrl.config.params.departure || $ctrl.departureParamName || 'Departure';
                     $ctrl.discountParamName = $ctrl.config.params.discount || $ctrl.discountParamName || 'Discount';
 
-                    var arrivalDate = moment($scope.arrivalDate).format($ctrl.dateFormat);
-                    var departureDate = moment($scope.departureDate).format($ctrl.dateFormat);
+                    var arrivalDate = moment($ctrl.arrivalDate).format($ctrl.dateFormat);
+                    var departureDate = moment($ctrl.departureDate).format($ctrl.dateFormat);
 
                     $ctrl.url += getQueryStringSeperator($ctrl.url) + $ctrl.localeParamName + '=' + binarta.application.localeForPresentation();
                     $ctrl.url += getQueryStringSeperator($ctrl.url) + $ctrl.arrivalParamName + '=' + arrivalDate;
@@ -162,6 +162,14 @@
                     return baseUrl + hotelId + '/' + urlSuffix;
                 }
 
+                $ctrl.onArrivalChange = function(oldVal, newVal) {
+                    var arrivalTime = new Date($ctrl.arrivalDate).getTime();
+                    var departureTime = new Date($ctrl.departureDate).getTime();
+
+                    if (departureTime < arrivalTime) {
+                        $ctrl.departureDate = $ctrl.arrivalDate.clone();
+                    }
+                };
 
                 $ctrl.$onDestroy = function () {
                     topicRegistry.unsubscribe('edit.mode', editModeListener);

@@ -2,10 +2,7 @@
     <div class="container">
         <bin-edit>
             <bin-edit-actions>
-                <bin-edit-action 
-                    action="$ctrl.openSettings()"
-                    icon-class="fa-cog" 
-                    i18n-code="booking.config.change.params">
+                <bin-edit-action action="$ctrl.openSettings()" icon-class="fa-cog" i18n-code="booking.config.change.params">
                 </bin-edit-action>
             </bin-edit-actions>
             <bin-edit-body ng-if="$ctrl.editing || $ctrl.config.url">
@@ -34,20 +31,22 @@
                     <div class="row">
                         <div class="form-group col-xs-12 col-sm-3">
                             <label for="binBookingArrivalDate" class="visible-xs" i18n code="booking.arrival-date" ng-bind="var"></label>
-                            <input class="form-control" id="binBookingArrivalDate" ng-model="arrivalDate" moment-picker="arrivalDate" format="DD/MM/YYYY"
-                                min-view="year" max-view="day" start-view="month" min-date="$ctrl.minArrivalDate" required>
+                            <input class="form-control" id="binBookingArrivalDate" change="$ctrl.onArrivalChange(newValue, oldValue)" ng-model="$ctrl.arrivalDate"
+                                moment-picker="$ctrl.arrivalDate" format="DD/MM/YYYY" min-view="year" max-view="day" start-view="month"
+                                min-date="$ctrl.minArrivalDate" required>
                         </div>
                         <div class="form-group col-xs-12 col-sm-3">
                             <label for="binBookingDepartureDate" class="visible-xs" i18n code="booking.departure-date" ng-bind="var"></label>
-                            <input class="form-control" id="binBookingDepartureDate" ng-model="departureDate" moment-picker="departureDate" format="DD/MM/YYYY"
-                                min-view="year" max-view="day" start-view="month" min-date="$ctrl.minDepartureDate" required>
+                            <input class="form-control" id="binBookingDepartureDate" ng-model="$ctrl.departureDate" moment-picker="$ctrl.departureDate"
+                                format="DD/MM/YYYY" min-view="year" max-view="day" start-view="month" min-date="$ctrl.minDepartureDate"
+                                required>
                         </div>
                         <div class="form-group col-xs-12 col-sm-3" ng-if="$ctrl.config.params.discountActive">
                             <label for="binBookingDiscountCode" class="visible-xs" i18n code="booking.discount-code" ng-bind="var"></label>
                             <input type="text" class="form-control" id="binBookingDiscountCode" ng-model="$ctrl.discountCode">
                         </div>
                         <div class="form-group col-xs-12 col-sm-3">
-                            <button type="submit" class="btn btn-primary btn-block"  i18n code="booking.btn-submit" ng-bind="var"></button>
+                            <button type="submit" class="btn btn-primary btn-block" i18n code="booking.btn-submit" ng-bind="var"></button>
                         </div>
                     </div>
                 </form>
