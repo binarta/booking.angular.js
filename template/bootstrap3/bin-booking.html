@@ -8,7 +8,13 @@
                     i18n-code="booking.config.change.params">
                 </bin-edit-action>
             </bin-edit-actions>
-            <bin-edit-body>
+            <bin-edit-body ng-if="$ctrl.editing || $ctrl.config.url">
+
+                <div ng-if="!$ctrl.config.url" class="alert alert-warning">
+                    <span i18n code="booking.params.url.warning" ng-bind="::var" read-only></span>
+                    <a ng-click="$ctrl.openSettings()" i18n code="booking.params.url.click.to.activate" ng-bind="::var" read-only></a>
+                </div>
+
                 <h1 i18n code="booking.title" ng-bind="var"></h1>
 
                 <form name="form" ng-submit="$ctrl.submit()">
