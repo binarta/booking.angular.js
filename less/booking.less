@@ -13,6 +13,7 @@ bin-booking {
     >.row {
       display: flex;
       justify-content: center;
+      flex-direction: column;
     }
   }
   @media (min-width: @screen-sm-min) {
@@ -22,6 +23,9 @@ bin-booking {
     }
     form {
       max-width: 100%;
+      >.row {
+        flex-direction: row;
+      }
     }
   }
 }
