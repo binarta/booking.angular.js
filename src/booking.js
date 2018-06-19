@@ -10,7 +10,8 @@
         this.updateConfig = function (config, response) {
             if (config.url === '' || isUrlValid(config.url)) {
                 var value = {
-                    url: config.url
+                    url: config.url,
+                    discountActive: config.discountActive,
                 };
 
                 value.params = config.params ? config.params : {};
