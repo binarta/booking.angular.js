@@ -96,20 +96,23 @@ describe('binBooking component', function () {
     var scope;
     var windowMock;
     var bookingBaseUrl = 'https://reservations.cubilis.eu/6331/Rooms/Select';
-    var openUrlSpy;
+    var openUrlSpy, observePublicSpy;
     var bookingConfigCode;
     var binBooking;
     var genericMomentDate;
+    var $rootScope;
 
     beforeEach(inject(function (_binarta_) {
         binarta = _binarta_;
         reset();
     }));
 
-    beforeEach(inject(function (_$componentController_, _moment_, $rootScope, _binBooking_) {
+    beforeEach(inject(function (_$componentController_, _moment_, _$rootScope_, _binBooking_, _$timeout_) {
         moment = _moment_;
+        $timeout = _$timeout_;
         $componentController = _$componentController_;
         binBooking = _binBooking_;
+        $rootScope = _$rootScope_;
         genericMomentDate = '2019-08-05';
 
         bookingConfig = {
@@ -126,6 +129,7 @@ describe('binBooking component', function () {
         binBooking.updateConfig(JSON.parse(JSON.stringify(bookingConfig)));
 
         openUrlSpy = jasmine.createSpy('open');
+        observePublicSpy = jasmine.createSpy('observePublic');
 
         windowMock = {
             open: openUrlSpy,
@@ -135,6 +139,9 @@ describe('binBooking component', function () {
             application: {
                 localeForPresentation: function () {
                     return 'nl-NL';
+                },
+                config: {
+                    observePublic: observePublicSpy,
                 },
             },
         };
@@ -172,15 +179,21 @@ describe('binBooking component', function () {
             });
 
             it('Should have a arrivalDate initialized', function () {
-                expect(scope.arrivalDate instanceof moment).toBeTruthy();
+                expect($ctrl.arrivalDate instanceof moment).toBeTruthy();
             });
 
             it('Should have a departureDate initialized', function () {
-                expect(scope.departureDate instanceof moment).toBeTruthy();
+                expect($ctrl.departureDate instanceof moment).toBeTruthy();
             });
 
-            it('Should have a config initialized', function () {
-                expect($ctrl.config.url).toBe(bookingBaseUrl);
+            it('Should observe the booking config', function () {
+                expect(observePublicSpy).toHaveBeenCalledWith('booking.config', jasmine.any(Function));
+            });
+
+            it('Should set the $config', function () {
+                $ctrl.findConfig();
+                expect($ctrl.config.url).toBe(bookingConfig.url);
+                expect($ctrl.config.params).toEqual(bookingConfig.params);
             });
 
         });
@@ -248,25 +261,22 @@ describe('binBooking component', function () {
         describe('Param names in url -', function () {
             beforeEach(function () {
                 $ctrl.config.url = bookingBaseUrl;
+                $ctrl.submit();
             });
 
             it('Should add the localeparam', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.localeParamName]).toBe(binartaMock.application.localeForPresentation());
             });
 
             it('Should add the arrivalParam', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.arrivalParamName]).toBe(genericMomentDate);
             });
 
             it('Should add the departureParam', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.departureParamName]).toBe(genericMomentDate);
             });
 
             it('Should add discountCode if available', function () {
-                $ctrl.submit();
                 expect(getParamsArr($ctrl.url)[$ctrl.discountParamName]).toBe(undefined);
             });
         });
@@ -340,7 +350,6 @@ describe('binBooking component', function () {
                 $ctrl.config.url = undefined;
                 expect($ctrl.submit).toThrowError('Should have a URL to navigate too');
             });
-
 
         });
     });
