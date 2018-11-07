@@ -1,10 +1,15 @@
 <div class="bin-widget">
     <div class="container">
         <bin-edit>
-            <bin-edit-actions>
-                <bin-edit-action action="$ctrl.openSettings()" icon-class="fa-cog" i18n-code="booking.config.change.params">
-                </bin-edit-action>
-            </bin-edit-actions>
+            <bin-actions>
+                <bin-action-group>
+                    <bin-action bin-action-type="expression"
+                                bin-action-expression="$ctrl.openSettings()"
+                                bin-action-icon-class="fa-cog"
+                                bin-action-i18n-code="booking.config.change.params">
+                    </bin-action>
+                </bin-action-group>
+            </bin-actions>
             <bin-edit-body ng-if="$ctrl.editing || $ctrl.config.url">
 
                 <div ng-if="!$ctrl.config.url" class="alert alert-warning">
